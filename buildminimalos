@@ -7,7 +7,7 @@
 #
 #   DESCRIPTION: Android build script.
 #
-#       OPTIONS: HELP = -h
+#       OPTIONS:
 #  REQUIREMENTS: Android source, android-sdk, repo, git, bash, nice, tee
 #          BUGS: ---
 #         NOTES: ---
