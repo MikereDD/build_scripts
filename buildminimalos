@@ -1,0 +1,138 @@
+#!/bin/bash -
+#===============================================================================
+#
+#          FILE: build_script.sh
+#
+#         USAGE: ./buildminimalos device
+#
+#   DESCRIPTION: Android build script.
+#
+#       OPTIONS: HELP = -h
+#  REQUIREMENTS: Android source, android-sdk, repo, git, bash, nice, tee
+#          BUGS: ---
+#         NOTES: ---
+#        AUTHOR: Mike Redd (MikereDD), mikeredd@mobileinfern.us
+#  ORGANIZATION: Dumb Terminal Team
+#       CREATED: 01/23/2014 12:53
+#      REVISION:  ---
+#===============================================================================
+
+#shopt -s -o nounset
+
+# Colorize and add text parameters
+red=$(tput setaf 1) # red
+grn=$(tput setaf 2) # green
+cya=$(tput setaf 6) # cyan
+txtbld=$(tput bold) # Bold
+bldred=${txtbld}$(tput setaf 1) # red
+bldgrn=${txtbld}$(tput setaf 2) # green
+bldblu=${txtbld}$(tput setaf 4) # blue
+bldcya=${txtbld}$(tput setaf 6) # cyan
+txtrst=$(tput sgr0) # Reset
+
+
+#Variable declarations
+SCRIPT="buildscript"
+VERSION="1.5"
+DTEVER=`date +%Y%m%d`
+LOGS="${PWD}/../build_logs"
+#SYSPATH="${PWD}/out/target/product/$DEVICE/system"
+HEAD=`which head`
+REPO=`which repo`
+NICE=`which nice`
+#DSTCHK="$($HEAD -1 /etc/issue | cut -f1 -d '\')"
+DEVICE="$1"
+THREADS="$2"
+NCE="$3"
+SYNC="$4"
+CLEAN="$5"
+
+# Time of build startup
+res1=$(date +%s.%N)
+
+echo -e " ${red}Building ${bldred}minimalOS-$DTEVER ${txtrst}";
+echo
+echo
+echo -e ${bldred}'  __  __  __  __  __  __  __  __   __   __    __   ___  '
+echo -e ' (  \/  )(  )(  \/  )(  )(  \/  ) (  ) (  )  /  \ / __) '
+echo -e ' )    (  )(  )    (  )(  )    (  /__\  )(__( () )\__ \ '
+echo -e ' (_/\/\_)(__)(_/\/\_)(__)(_/\/\_)(_)(_)(____)\__/ (___/ '${txtrst}
+echo
+echo -e " ${grn}$SCRIPT ${txtrst}... Ver:${cya}$VERSION ${txtrst} "
+echo
+echo
+
+# sync with latest sources
+echo
+if [ "$SYNC" == "sync" ]; then
+   echo -e " ${bldred}Syncing latest minimalOS manifest ${txtrst}"
+   repo sync -j"$THREADS";
+   echo
+fi
+
+# setup environment
+if [ "$CLEAN" == "clean" ]; then
+   echo -e " ${bldred}Cleaning up out folder ${txtrst}"
+   make clobber;
+   echo
+else
+    echo -e " ${bldred}Skipping out folder cleanup ${txtrst}"
+fi
+
+# use nice
+if [ "$NICE" == "" ]; then
+    NICE="10"
+else
+    NICE="$NICE"
+fi
+
+if [ "$THREADS" == "" ]; then
+    THREADS="1"
+else
+   THREADS="$THREADS"
+fi
+
+# Create build_logs directory
+if [ ! -d "$LOGS" ]; then
+    echo
+    echo -e " ${bldgrn}Creating build_logs directory${txtrst}..."
+    mkdir -p $LOGS
+    echo
+fi
+
+# setup environment
+echo -e " ${bldred}Setting up build environment ${txtrst}"
+. build/envsetup.sh
+
+# lunch device
+echo
+echo -e "${bldred}Lunching your device ${txtrst}"
+lunch "minimalos_$DEVICE-userdebug";
+
+# Arch Linux path work around...
+#if [ "$DSTCHK" == "Arch Linux" ]; then
+#    echo
+#    echo -e "${bldblu} Creating working around symlink for Arch Linux lib usr/lib ${txtrst}"
+#    mkdir -p $SYSPATH/lib
+#    mkdir -p $SYSPATH/usr
+#    ln -s $SYSPATH/lib/ $SYSPATH/usr/lib
+#    echo
+#    echo -e "${bldblu} Symlinked dirs created ${txtrst} ..."
+#fi
+
+echo
+echo -e " ${bldred}Starting minimalOS build for $DEVICE ${txtrst}"
+echo
+echo -e " ${bldblu}...${txtrst} device=${bldred}$DEVICE${txtrst} ${bldblu}...${txtrst} nice=${bldred}$NCE${txtrst} ${bldblu}...${txtrst} threads=${bldred}$THREADS${txtrst} ${bldblu}...${txtrst} "
+echo
+
+# start build
+# log builds by date + time
+LANG=C time $NICE -n"$NCE" make otapackage -j"$THREADS" 2>&1 | tee $LOGS/minimalos_$DEVICE-$(date '+%H.%m.%S-%h.%d').log;
+echo
+
+# finished? get elapsed time
+res2=$(date +%s.%N)
+echo -e " ${bldgrn}Total time elapsed: ${txtrst}${grn}$(echo "($res2 - $res1) / 60"|bc ) minutes ($(echo "$res2 - $res1"|bc ) seconds) ${txtrst}"
+echo
+
