@@ -3,7 +3,7 @@
 #
 #          FILE: build_script.sh
 #
-#         USAGE: ./build_script.sh
+#         USAGE: ./buildraum device
 #
 #   DESCRIPTION: Android build script.
 #
