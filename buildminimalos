@@ -107,7 +107,7 @@ echo -e " ${bldred}Setting up build environment ${txtrst}"
 # lunch device
 echo
 echo -e "${bldred}Lunching your device ${txtrst}"
-lunch "minimalos_$DEVICE-userdebug";
+lunch "minimal_$DEVICE-userdebug";
 
 # Arch Linux path work around...
 #if [ "$DSTCHK" == "Arch Linux" ]; then
@@ -128,7 +128,7 @@ echo
 
 # start build
 # log builds by date + time
-LANG=C time $NICE -n"$NCE" make otapackage -j"$THREADS" 2>&1 | tee $LOGS/minimalos_$DEVICE-$(date '+%H.%m.%S-%h.%d').log;
+LANG=C time $NICE -n"$NCE" make otapackage -j"$THREADS" 2>&1 | tee $LOGS/minimal_$DEVICE-$(date '+%H.%m.%S-%h.%d').log;
 echo
 
 # finished? get elapsed time
