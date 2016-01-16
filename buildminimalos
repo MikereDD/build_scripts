@@ -8,7 +8,7 @@
 #   DESCRIPTION: Android build script.
 #
 #       OPTIONS:
-#  REQUIREMENTS: Android source, android-sdk, repo, git, bash, nice, tee
+#  REQUIREMENTS: Android source, android-sdk, repo, git, bash, nice, tee, time
 #          BUGS: ---
 #         NOTES: ---
 #        AUTHOR: Mike Redd (MikereDD), mikeredd@mobileinfern.us
