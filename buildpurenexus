@@ -38,9 +38,12 @@ DTEVER=`date +%Y%m%d`
 LOGS="${PWD}/../build_logs"
 HEAD=`which head`
 REPO=`which repo`
+NICE=`which nice`
 DEVICE="$1"
-SYNC="$2"
-CLEAN="$3"
+THREADS="$2"
+NCE="$3"
+SYNC="$4"
+CLEAN="$5"
 
 # Time of build startup
 res1=$(date +%s.%N)
@@ -68,10 +71,23 @@ fi
 # setup environment
 if [ "$CLEAN" == "clean" ]; then
    echo -e " ${bldred}Cleaning up out folder ${txtrst}"
-   make clobber;
+   make clean && make clobber;
    echo
 else
     echo -e " ${bldred}Skipping out folder cleanup ${txtrst}"
+fi
+
+# use nice
+if [ "$NICE" == "" ]; then
+    NICE="10"
+else
+    NICE="$NICE"
+fi
+
+if [ "$THREADS" == "" ]; then
+    THREADS="1"
+else
+   THREADS="$THREADS"
 fi
 
 # Create build_logs directory
@@ -88,7 +104,8 @@ echo -e " ${bldred}Setting up build environment ${txtrst}"
 
 # brunch device
 echo
-echo -e "${bldred}Brunching your device ${txtrst}"
+echo -e "${bldred}Lunching your device ${txtrst}"
+lunch "nexus_$DEVICE-userdebug";
 
 echo
 echo -e " ${bldred}Starting PureNexusProject build for $DEVICE ${txtrst}"
@@ -98,7 +115,7 @@ echo
 
 # start build
 # log builds by date + time
-LANG=C brunch $DEVICE 2>&1 | tee $LOGS/purenexus_$DEVICE-$(date '+%H.%m.%S-%h.%d').log;
+LANG=C time $NICE -n"$NCE" make otapackage -j"$THREADS" 2>&1 | tee $LOGS/purenexus_$DEVICE-$(date '+%H.%m.%S-%h.%d').log;
 echo
 
 # finished? get elapsed time
