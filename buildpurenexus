@@ -110,7 +110,7 @@ lunch "nexus_$DEVICE-userdebug";
 echo
 echo -e " ${bldred}Starting PureNexusProject build for $DEVICE ${txtrst}"
 echo
-echo -e " ${bldblu}...${txtrst} device=${bldred}$DEVICE${txtrst} ${bldblu}...${txtrst} "
+echo -e " ${bldblu}...${txtrst} device=${bldred}$DEVICE${txtrst} ${bldblu}...${txtrst} nice=${bldred}$NCE${txtrst} ${bldblu}...${txtrst} threads=${bldred}$THREADS${txtrst} ${bldblu}...${txtrst} "
 echo
 
 # start build
