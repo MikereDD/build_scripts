@@ -36,14 +36,11 @@ SCRIPT="buildscript"
 VERSION="1.5"
 DTEVER=`date +%Y%m%d`
 LOGS="${PWD}/../build_logs"
-#SYSPATH="${PWD}/out/target/product/$DEVICE/system"
 HEAD=`which head`
 REPO=`which repo`
-NICE=`which nice`
-#DSTCHK="$($HEAD -1 /etc/issue | cut -f1 -d '\')"
 DEVICE="$1"
-SYNC="$4"
-CLEAN="$5"
+SYNC="$2"
+CLEAN="$3"
 
 # Time of build startup
 res1=$(date +%s.%N)
