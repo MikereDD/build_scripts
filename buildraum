@@ -72,7 +72,7 @@ fi
 # setup environment
 if [ "$4" == "clean" ]; then
    echo -e " ${bldred}Cleaning up out folder ${txtrst}"
-   make clobber;
+   make clean && make clobber;
    echo
 else
     echo -e " ${bldred}Skipping out folder cleanup ${txtrst}"
