@@ -62,14 +62,14 @@ echo
 
 # sync with latest sources
 echo
-if [ "$SYNC" == "sync" ]; then
+if [ "$5" == "sync" ]; then
    echo -e " ${bldred}Syncing latest PureNexusProject manifest ${txtrst}"
    repo sync -j"$THREADS";
    echo
 fi
 
 # setup environment
-if [ "$CLEAN" == "clean" ]; then
+if [ "$4" == "clean" ]; then
    echo -e " ${bldred}Cleaning up out folder ${txtrst}"
    make clean && make clobber;
    echo
