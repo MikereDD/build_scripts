@@ -37,7 +37,7 @@ echo -e "+-+-+-+-+ +-+-+-+-+"
 # sync with latest sources
 echo -e ""
 if [ "$5" == "sync" ]; then
-   echo -e "${bldred}Syncing latest raumZero manifest ${txtrst}"
+   echo -e "${bldred}Syncing latest slimrom manifest ${txtrst}"
    repo sync -j"$THREADS"
    echo -e ""
 fi
