@@ -125,3 +125,15 @@ echo sending build status
 sh $HOME/bin/emailbuildinfo
 echo email sent
 echo
+
+# upload files to pcloud
+echo uploading files to pcloud
+~/$HOME/bin/uploadbuildfiles
+echo files pushed
+echo
+
+# email pcloud pushed
+echo sending pcloud pushed
+~/$HOME/bin/emailpcloudinfo
+echo email sent
+echo
