@@ -14,7 +14,7 @@
 #        AUTHOR: Mike Redd (MikereDD), mikeredd@mobileinfern.us
 #  ORGANIZATION: Dumb Terminal Team
 #       CREATED: 01/23/2014 12:53
-#      REVISION: 01/04/2019 22:45
+#      REVISION:  ---
 #===============================================================================
 
 #shopt -s -o nounset
@@ -92,6 +92,12 @@ if [ ! -d "$LOGS" ]; then
     echo
     echo -e " ${bldgrn}Creating build_logs directory${txtrst}..."
     mkdir -p $LOGS
+    echo
+else
+    # remove old build logs
+    echo -e " ${bldred}Removing old build logs${txtrst}..."
+    rm -rf $LOGS/*
+    echo -e " ${bldred}Logs removed${txtrst}..."
     echo
 fi
 
