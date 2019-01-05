@@ -1,20 +1,20 @@
 #!/bin/env bash
 #===============================================================================
 #
-#          FILE: build_script.sh
+#          FILE: buildaquarios
 #
 #         USAGE: ./buildaquarios device
 #
 #   DESCRIPTION: Android build script.
 #
 #       OPTIONS:
-#  REQUIREMENTS: Android source, android-sdk, repo, git, bash, nice, tee, time
+#  REQUIREMENTS: Android source, android-sdk, repo, git, bash, tee, time
 #          BUGS: ---
 #         NOTES: ---
 #        AUTHOR: Mike Redd (MikereDD), mikeredd@mobileinfern.us
 #  ORGANIZATION: Dumb Terminal Team
 #       CREATED: 01/23/2014 12:53
-#      REVISION:  ---
+#      REVISION: 01/04/2019 22:45
 #===============================================================================
 
 #shopt -s -o nounset
@@ -33,7 +33,7 @@ txtrst=$(tput sgr0) # Reset
 
 #Variable declarations
 SCRIPT="buildscript"
-VERSION="1.6"
+VERSION="1.7"
 DTEVER=`date +%Y%m%d`
 LOGS="${PWD}/../build_logs"
 HEAD=`which head`
@@ -82,7 +82,7 @@ else
 fi
 
 if [ "$THREADS" == "" ]; then
-    THREADS="1"
+    THREADS="16"
 else
    THREADS="$THREADS"
 fi
@@ -107,7 +107,7 @@ lunch "$DEVICE-userdebug";
 echo
 echo -e " ${bldred}Starting AquariOS build for $DEVICE ${txtrst}"
 echo
-echo -e " ${bldblu}...${txtrst} device=${bldred}$DEVICE${txtrst} ${bldblu}...${txtrst} nice=${bldred}$NCE${txtrst} ${bldblu}...${txtrst} threads=${bldred}$THREADS${txtrst} ${bldblu}...${txtrst} "
+echo -e " ${bldblu}...${txtrst} device=${bldred}$DEVICE${txtrst} ${bldblu}...${txtrst} ${bldblu}...${txtrst} threads=${bldred}$THREADS${txtrst} ${bldblu}...${txtrst} "
 echo
 
 # start build
