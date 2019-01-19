@@ -1,0 +1,144 @@
+#!/bin/env bash
+#===============================================================================
+#
+#          FILE: buildaquarios-caf
+#
+#         USAGE: ./buildaquarios-caf device
+#
+#   DESCRIPTION: Android build script.
+#
+#       OPTIONS:
+#  REQUIREMENTS: Android source, android-sdk, repo, git, bash, tee, time
+#          BUGS: ---
+#         NOTES: ---
+#        AUTHOR: Mike Redd (MikereDD), mikeredd@mobileinfern.us
+#  ORGANIZATION: Dumb Terminal Team
+#       CREATED: 01/23/2014 12:53
+#      REVISION: 01/19/2019 04:56
+#===============================================================================
+
+#shopt -s -o nounset
+
+# Colorize and add text parameters
+red=$(tput setaf 1) # red
+grn=$(tput setaf 2) # green
+cya=$(tput setaf 6) # cyan
+txtbld=$(tput bold) # Bold
+bldred=${txtbld}$(tput setaf 1) # red
+bldgrn=${txtbld}$(tput setaf 2) # green
+bldblu=${txtbld}$(tput setaf 4) # blue
+bldcya=${txtbld}$(tput setaf 6) # cyan
+txtrst=$(tput sgr0) # Reset
+
+
+#Variable declarations
+SCRIPT="buildscript"
+VERSION="1.7"
+DTEVER=`date +%Y%m%d`
+LOGS="${PWD}/../build_logs"
+HEAD=`which head`
+REPO=`which repo`
+DEVICE="$1"
+THREADS="$2"
+SYNC="$3"
+CLEAN="$4"
+
+# Time of build startup
+res1=$(date +%s.%N)
+
+echo
+echo -e " ${red}Building ${bldcya}AquariOS-CAF-$DTEVER ${txtrst}";
+echo
+echo
+echo -e ${bldcya} '                   _____          ______  '
+echo -e '     /\                     / ____|   /\   |  ____| '
+echo -e '    /  \   __ _ _   _  __ _| |       /  \  | |__    '
+echo -e '   / /\ \ / _` | | | |/ _` | |      / /\ \ |  __|   '
+echo -e '  / ____ \ (_| | |_| | (_| | |____ / ____ \| |      '
+echo -e ' /_/    \_\__, |\__,_|\__,_|\_____/_/    \_\_|      '
+echo -e '             | |                                    '
+echo -e '             |_|                                    '${txtrst}
+echo
+echo -e " ${grn}$SCRIPT ${txtrst}... Ver:${cya}$VERSION ${txtrst} "
+echo
+echo
+
+# sync with latest sources
+echo
+if [ "$3" == "sync" ]; then
+   echo -e " ${bldcya}Syncing latest AquariOS-CAF manifest ${txtrst}"
+   repo sync -j"$THREADS";
+   echo
+fi
+
+# setup environment
+if [ "$4" == "clean" ]; then
+   echo -e " ${bldred}Cleaning up out folder ${txtrst}"
+   make clean && make clobber;
+   echo
+else
+    echo -e " ${bldred}Skipping out folder cleanup ${txtrst}"
+fi
+
+if [ "$THREADS" == "" ]; then
+    THREADS="16"
+else
+   THREADS="$THREADS"
+fi
+
+# Create build_logs directory
+if [ ! -d "$LOGS" ]; then
+    echo
+    echo -e " ${bldgrn}Creating build_logs directory${txtrst}..."
+    mkdir -p $LOGS
+    echo
+else
+    # remove old build logs
+    echo -e " ${bldred}Removing old build logs${txtrst}..."
+    rm -rf $LOGS/*
+    echo -e " ${bldred}Logs removed${txtrst}..."
+    echo
+fi
+
+# setup environment
+echo -e " ${bldred}Setting up build environment ${txtrst}"
+. build/envsetup.sh
+
+# lunch device
+echo
+echo -e "${bldred}Lunching your device ${txtrst}"
+lunch "aquarios_$DEVICE-userdebug";
+
+echo
+echo -e " ${bldred}Starting AquariOS-CAF build for $DEVICE ${txtrst}"
+echo
+echo -e " ${bldblu}...${txtrst} device=${bldred}$DEVICE${txtrst} ${bldblu}...${txtrst} ${bldblu}...${txtrst} threads=${bldred}$THREADS${txtrst} ${bldblu}...${txtrst} "
+echo
+
+# start build
+# log builds by date + time
+time mka aquarios 2>&1 | tee $LOGS/aquarios-caf_$DEVICE-$(date '+%H.%m.%S-%h.%d').log;
+echo
+
+# finished? get elapsed time
+res2=$(date +%s.%N)
+echo -e " ${bldgrn}Total time elapsed: ${txtrst}${grn}$(echo "($res2 - $res1) / 60"|bc ) minutes ($(echo "$res2 - $res1"|bc ) seconds) ${txtrst}"
+echo
+
+# email build status
+echo sending build status
+sh $HOME/bin/emailbuildinfo
+echo email sent
+echo
+
+# upload files to pcloud
+echo uploading files to pcloud
+sh $HOME/bin/uploadbuildfiles
+echo files pushed
+echo
+
+# email pcloud pushed
+echo sending pcloud pushed
+sh $HOME/bin/emailpcloudinfo
+echo email sent
+echo
