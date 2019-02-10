@@ -14,7 +14,7 @@
 #        AUTHOR: Mike Redd (MikereDD), mikeredd@mobileinfern.us
 #  ORGANIZATION: Dumb Terminal Team
 #       CREATED: 01/23/2014 12:53
-#      REVISION: 01/19/2019 04:56
+#      REVISION: 02/10/2019 01:20
 #===============================================================================
 
 #shopt -s -o nounset
@@ -33,15 +33,15 @@ txtrst=$(tput sgr0) # Reset
 
 #Variable declarations
 SCRIPT="buildscript"
-VERSION="1.7"
+VERSION="1.8"
 DTEVER=`date +%Y%m%d`
 LOGS="${PWD}/../build_logs"
 HEAD=`which head`
 REPO=`which repo`
 DEVICE="$1"
 THREADS="$2"
-SYNC="$3"
-CLEAN="$4"
+CLEAN="$3"
+SYNC="$4"
 
 # Time of build startup
 res1=$(date +%s.%N)
@@ -61,29 +61,29 @@ echo -e '             |_|                                    '${txtrst}
 echo
 echo -e " ${grn}$SCRIPT ${txtrst}... Ver:${cya}$VERSION ${txtrst} "
 echo
-echo
+
+# threads
+if [ "$THREADS" == "" ]; then
+    THREADS="16"
+else
+   THREADS="$THREADS"
+fi
+
+# clean build environment
+if [ "$3" == "clean" ]; then
+   echo -e " ${bldred}Cleaning up out folder ${txtrst}"
+   make clean && make clobber;
+   echo
+else
+    echo -e " ${bldred}Skipping out folder cleanup ${txtrst}"
+fi
 
 # sync with latest sources
 echo
-if [ "$3" == "sync" ]; then
-   echo -e " ${bldcya}Syncing latest AquariOS-CAF manifest ${txtrst}"
-   repo sync -j"$THREADS";
-   echo
-fi
-
-# setup environment
-if [ "$4" == "clean" ]; then
-   echo -e " ${bldred}Cleaning up out folder ${txtrst}"
-   make clean && make clobber;
-   echo
-else
-    echo -e " ${bldred}Skipping out folder cleanup ${txtrst}"
-fi
-
-if [ "$THREADS" == "" ]; then
-    THREADS="16"
-else
-   THREADS="$THREADS"
+if [ "$4" == "sync" ]; then
+   echo -e " ${bldcya}Syncing latest AquariOS-CAF manifest ${txtrst}"
+   repo sync -j"$THREADS";
+   echo
 fi
 
 # Create build_logs directory
@@ -117,7 +117,7 @@ echo
 
 # start build
 # log builds by date + time
-time mka aquarios 2>&1 | tee $LOGS/aquarios-caf_$DEVICE-$(date '+%H.%m.%S-%h.%d').log;
+time mka aquarios -j"$THREADS" 2>&1 | tee $LOGS/aquarios-caf_$DEVICE-$(date '+%H.%m.%S-%h.%d').log;
 echo
 
 # finished? get elapsed time
@@ -127,18 +127,6 @@ echo
 
 # email build status
 echo sending build status
-sh $HOME/bin/emailcafbuildinfo
-echo email sent
-echo
-
-# upload files to pcloud
-echo uploading files to pcloud
-sh $HOME/bin/uploadcafbuildfiles
-echo files pushed
-echo
-
-# email pcloud pushed
-echo sending pcloud pushed
-sh $HOME/bin/emailcafpcloudinfo
+sh $HOME/bin/email-push-to-pcloud-caf.sh
 echo email sent
 echo
