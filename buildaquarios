@@ -14,7 +14,7 @@
 #        AUTHOR: Mike Redd (MikereDD), mikeredd@mobileinfern.us
 #  ORGANIZATION: Dumb Terminal Team
 #       CREATED: 01/23/2014 12:53
-#      REVISION: 02/10/2019 01:19
+#      REVISION: 03/01/2019 21:17
 #===============================================================================
 
 #shopt -s -o nounset
@@ -33,15 +33,15 @@ txtrst=$(tput sgr0) # Reset
 
 #Variable declarations
 SCRIPT="buildscript"
-VERSION="1.8"
+VERSION="1.9"
 DTEVER=`date +%Y%m%d`
 LOGS="${PWD}/../build_logs"
 HEAD=`which head`
 REPO=`which repo`
 DEVICE="$1"
-THREADS="$2"
-CLEAN="$3"
-SYNC="$4"
+#THREADS="$2"
+#CLEAN="$3"
+#SYNC="$4"
 
 # Time of build startup
 res1=$(date +%s.%N)
@@ -64,28 +64,28 @@ echo -e " ${grn}$SCRIPT ${txtrst}... Ver:${cya}$VERSION ${txtrst} "
 echo
 
 # threads
-if [ "$THREADS" == "" ]; then
-    THREADS="16"
-else
-   THREADS="$THREADS"
-fi
+#if [ "$THREADS" == "" ]; then
+#    THREADS="16"
+#else
+#   THREADS="$THREADS"
+#fi
 
 # clean build environment
-if [ "$3" == "clean" ]; then
-   echo -e " ${bldred}Cleaning up out folder ${txtrst}"
-   make clean && make clobber;
-   echo
-else
-    echo -e " ${bldred}Skipping out folder cleanup ${txtrst}"
-fi
+#if [ "$3" == "clean" ]; then
+#   echo -e " ${bldred}Cleaning up out folder ${txtrst}"
+#   make clean && make clobber;
+#   echo
+#else
+#    echo -e " ${bldred}Skipping out folder cleanup ${txtrst}"
+#fi
 
 # sync with latest sources
-echo
-if [ "$4" == "sync" ]; then
-   echo -e " ${bldcya}Syncing latest AquariOS-CAF manifest ${txtrst}"
-   repo sync -j"$THREADS";
-   echo
-fi
+#echo
+#if [ "$4" == "sync" ]; then
+#   echo -e " ${bldcya}Syncing latest AquariOS-CAF manifest ${txtrst}"
+#   repo sync ;
+#   echo
+#fi
 
 # Create build_logs directory
 if [ ! -d "$LOGS" ]; then
@@ -108,17 +108,17 @@ echo -e " ${bldred}Setting up build environment ${txtrst}"
 # lunch device
 echo
 echo -e "${bldred}Lunching your device ${txtrst}"
-lunch "$DEVICE-userdebug";
+breakfast "$DEVICE-userdebug";
 
 echo
 echo -e " ${bldred}Starting AquariOS build for $DEVICE ${txtrst}"
 echo
-echo -e " ${bldblu}...${txtrst} device=${bldred}$DEVICE${txtrst} ${bldblu}...${txtrst} ${bldblu}...${txtrst} threads=${bldred}$THREADS${txtrst} ${bldblu}...${txtrst} "
+echo -e " ${bldblu}...${txtrst} device=${bldred}$DEVICE${txtrst} ${bldblu}...${txtrst} ${bldblu}...${txtrst} threads=${bldred}32${txtrst} ${bldblu}...${txtrst} "
 echo
 
 # start build
 # log builds by date + time
-time mka bacon -j"$THREADS" 2>&1 | tee $LOGS/aqua_$DEVICE-$(date '+%H.%m.%S-%h.%d').log;
+time mka bacon 2>&1 | tee $LOGS/aqua_$DEVICE-$(date '+%H.%m.%S-%h.%d').log;
 echo
 
 # finished? get elapsed time
