@@ -1,9 +1,9 @@
 #!/bin/env bash
 #===============================================================================
 #
-#          FILE: buildaquarios-caf
+#          FILE: buildaquarioscaf
 #
-#         USAGE: ./buildaquarios-caf device
+#         USAGE: ./buildaquarioscaf device
 #
 #   DESCRIPTION: Android build script.
 #
@@ -14,7 +14,7 @@
 #        AUTHOR: Mike Redd (MikereDD), mikeredd@mobileinfern.us
 #  ORGANIZATION: Dumb Terminal Team
 #       CREATED: 01/23/2014 12:53
-#      REVISION: 03/01/2019 21:24
+#      REVISION: 05/03/2019 03:13
 #===============================================================================
 
 #shopt -s -o nounset
@@ -39,9 +39,6 @@ LOGS="${PWD}/../build_logs"
 HEAD=`which head`
 REPO=`which repo`
 DEVICE="$1"
-#THREADS="$2"
-#CLEAN="$3"
-#SYNC="$4"
 
 # Time of build startup
 res1=$(date +%s.%N)
@@ -61,36 +58,6 @@ echo -e '             |_|                                    '${txtrst}
 echo
 echo -e " ${grn}$SCRIPT ${txtrst}... Ver:${cya}$VERSION ${txtrst} "
 echo
-
-# threads
-#if [ "$THREADS" == "" ]; then
-#    16
-#else
-#   $THREADS
-#fi
-
-# clean build environment
-#if [ "$3" == "clean" ]; then
-#   echo -e " ${bldred}Cleaning up out folder ${txtrst}"
-#   make clean && make clobber
-#   echo
-#else
-#    echo -e " ${bldred}Skipping out folder cleanup ${txtrst}"
-#fi
-
-# sync with latest sources
-#echo
-#if [ "$4" == "sync" ]; then
-#   echo -e " ${bldcya}Syncing latest AquariOS-CAF manifest ${txtrst}"
-#   repo sync -j"$THREADS";
-#   echo
-#fi
-
-#if [ "$THREADS" == "" ]; then
-#    THREADS="16"
-#else
-#   THREADS="$THREADS"
-#fi
 
 # Create build_logs directory
 if [ ! -d "$LOGS" ]; then
